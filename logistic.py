@@ -12,9 +12,11 @@ The assignment works on the following main goals:
 
 # Import libraries
 import sys
-import random
+from xxlimited import new
 import numpy as np
 import pandas as pd
+from pandas.api.types import is_string_dtype
+from pandas.api.types import is_numeric_dtype
 
 """
 Takes the following parameters:
@@ -26,11 +28,32 @@ d. The percentage of instances to use for a validation set
 e. A random seed as an integer
 """
 
-def data_preprocessing(training_set,  testing_set, validation_set):
-    # Create training One-Hot Encoded Dataframe
-    training_set_dummies = pd.get_dummies(training_set, columns=training_set.columns[1:], prefix_sep='.')
-    testing_set_dummies = pd.get_dummies(testing_set, columns=testing_set.columns[1:], prefix_sep='.')
-    validation_set_dummies = pd.get_dummies(validation_set, columns=validation_set.columns[1:], prefix_sep='.')
+def data_preprocessing(dataset):
+    # Determine whether a column contains numerical or nominial values
+    # Create a new Pandas dataframe to maintain order of columns when doing One-Hot Coding on Nominial values
+    new_dataframe = pd.DataFrame()
+    # Iterate through all the columns of the training_set 
+    for x in dataset.columns:
+        # Determine if the column 'x' in training set is a Nominial Data or Numerical 
+        if is_string_dtype(dataset[x]) and not is_numeric_dtype(dataset[x]):
+            # Apply One-Hot Encoding onto Pandas Series at column 'x' 
+            dummies = pd.get_dummies(dataset[x], prefix=x, prefix_sep='.')
+            # Combine the One-Hot Encoding Dataframe to our new dataframe to the new_dataframe 
+            new_dataframe = pd.concat([new_dataframe, dummies],axis=1)
+        else: 
+            # Find the maximum value in column 'x'
+            max_value = max(dataset[x])
+            # Find the minimum value in column 'x'
+            min_value = min(dataset[x])
+            # If the max and min aren't 0 to ensure that we don't do zero division
+            if max_value != 0 and min_value != 0:
+                # Apply net value formula to every value in pandas dataframe
+                dataset[x] = dataset[x].apply(lambda x: (x - min_value)/(max_value - min_value))
+            # Combine New column to our new_dataframe
+            new_dataframe = pd.concat([new_dataframe, dataset[x]],axis=1)
+    return new_dataframe
+
+# Beginning of code
 try:
     # Get Dataset File
     # a.The path to a file containing a data set (e.g., monks1.csv)
@@ -94,8 +117,11 @@ try:
     print(f"Length of validiation set: {len(validation_set)}")
     print(f"Length of testing: {len(testing_set)}")
 
-    data_preprocessing(training_set,  testing_set, validation_set)
+    training_set = data_preprocessing(training_set)
+    validation_set = data_preprocessing(validation_set)
+    testing_set = data_preprocessing(testing_set)
 
+    print(training_set)
 except IndexError as e:
     print(f"Error. Message below:\n{e}\nPlease try again.")
     exit(1)
