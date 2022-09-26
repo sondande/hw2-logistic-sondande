@@ -122,6 +122,7 @@ try:
     testing_set = data_preprocessing(testing_set)
 
     print(training_set)
+    
 except IndexError as e:
     print(f"Error. Message below:\n{e}\nPlease try again.")
     exit(1)
