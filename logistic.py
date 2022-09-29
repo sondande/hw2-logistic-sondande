@@ -12,7 +12,6 @@ The assignment works on the following main goals:
 
 # Import libraries
 import sys
-from xxlimited import new
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_string_dtype
@@ -52,6 +51,51 @@ def data_preprocessing(dataset):
             # Combine New column to our new_dataframe
             new_dataframe = pd.concat([new_dataframe, dataset[x]],axis=1)
     return new_dataframe
+
+"""
+Creation of a Sigmoid Function that handles overflow cases as well
+"""
+def sigmoid(net):
+    # If x is a very large positive number, the sigmoid function will be close to 1
+    if net >= 0:
+        z = np.exp(-net)
+        return 1 / (1 + z)
+    # If x is a very large negative number, the sigmoid function will be close to 0
+    else:
+        z = np.exp(net)
+        return z / (1 + z)
+
+"""
+Calculate Net Value for Stochastic Gradient Descent
+"""
+def net_calculate(weights, x_instance):
+    # Take the first value from weights as it is part of the net without a corresponding value in the instance
+    net = weights[0]
+    # Instances and weights are the same length
+    for i in range(1, len(weights)):
+        net += weights[i] * x_instance[i]
+    return net
+
+
+def stochastic_gradient_descent(training_set, validation_set):
+    # 1. Choose random values for all weights (often between -0.1 and 0.1)
+    weights = np.random.uniform(-0.1, 0.1, training_set.shape[1])
+    # 2. Unitl either the accuracy on the validation set > A% or we run n epochs
+    # Set accuracy variable 
+    accuracy = 0
+    epochs = 0
+    # A. For each instance x in the training set
+    for insta_count in range(training_set.shape[0]):
+        for attr_count in range(training_set.shape[1]):
+            net_value = net_calculate(weights, training_set.iloc[insta_count])
+            out_value = sigmoid(net_value)
+            print(f"Iteration {attr_count}:\nNet Value: {net_value}\nOut Value: {out_value}\n")
+            # I. Calculate gradient of w0
+            grad_w0 = -1 * out_value * (1 - out_value) * (training_set.iloc[x][0] - out_value)
+            # II. Calculate gradient of wi
+            grad_wi = -1 * out_value * (1 - out_value) * (training_set.iloc[x][0] - out_value)
+            # III. Update w0
+            # IV. Update wi
 
 # Beginning of code
 try:
@@ -113,14 +157,18 @@ try:
     print(f"Splits indexes they begin at: {splits_indices}\n")
     training_set, validation_set, testing_set = np.split(shuffled_df, splits_indices)
 
+    # Print out the lengths of the training, validation, and testing sets
     print(f"Length of training: {len(training_set)}")
     print(f"Length of validiation set: {len(validation_set)}")
-    print(f"Length of testing: {len(testing_set)}")
+    print(f"Length of testing: {len(testing_set)}\n")
 
+    # Preprocess the data
     training_set = data_preprocessing(training_set)
     validation_set = data_preprocessing(validation_set)
     testing_set = data_preprocessing(testing_set)
 
+    # Train the model
+    stochastic_gradient_descent(training_set, validation_set)
     print(training_set)
     
 except IndexError as e:
