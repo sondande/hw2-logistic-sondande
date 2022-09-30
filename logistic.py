@@ -69,7 +69,7 @@ def sigmoid(net):
 Calculate Net Value for Stochastic Gradient Descent
 """
 def net_calculate(weights, x_instance):
-    # Take the first value from weights as it is part of the net without a corresponding value in the instance
+    # take the first value from weights as it is part of the net without a corresponding value in the instance
     net = weights[0]
     # Instances and weights are the same length
     for i in range(1, len(weights)):
@@ -77,25 +77,55 @@ def net_calculate(weights, x_instance):
     return net
 
 
-def stochastic_gradient_descent(training_set, validation_set):
+def stochastic_gradient_descent(training_set, validation_set, learning_rate):
+    np_ts = training_set.to_numpy()
+    np_vs = validation_set.to_numpy()
     # 1. Choose random values for all weights (often between -0.1 and 0.1)
     weights = np.random.uniform(-0.1, 0.1, training_set.shape[1])
     # 2. Unitl either the accuracy on the validation set > A% or we run n epochs
     # Set accuracy variable 
     accuracy = 0
     epochs = 0
-    # A. For each instance x in the training set
-    for insta_count in range(training_set.shape[0]):
-        for attr_count in range(training_set.shape[1]):
-            net_value = net_calculate(weights, training_set.iloc[insta_count])
-            out_value = sigmoid(net_value)
-            print(f"Iteration {attr_count}:\nNet Value: {net_value}\nOut Value: {out_value}\n")
+    while accuracy <= 0.99 and epochs < 1000:
+        # A. For each instance x in the training set
+        for insta_count in range(len(np_ts)):
+            # Calculate Net Value between X instance and weights
+            net = net_calculate(weights=weights, x_instance=np_ts[insta_count])
+            # Calculate the out values from the net values calculated above 
+            out_value = sigmoid(net=net)
             # I. Calculate gradient of w0
-            grad_w0 = -1 * out_value * (1 - out_value) * (training_set.iloc[x][0] - out_value)
+            grad_w0 = -1 * out_value * (1 - out_value) * (np_ts[insta_count][0] - out_value)
+            # Update first weight in weights
+            weights[0] -= learning_rate * grad_w0
             # II. Calculate gradient of wi
-            grad_wi = -1 * out_value * (1 - out_value) * (training_set.iloc[x][0] - out_value)
-            # III. Update w0
-            # IV. Update wi
+            for attr_count in range(len(np_ts[0])):
+                grad_wi = -1 * np_ts[insta_count][attr_count] * out_value * (1 - out_value) * (np_ts[insta_count][0] - out_value)
+                weights[attr_count] -= learning_rate * grad_wi
+            # print(f"Updated weights list: {weights}\n")
+        epochs += 1
+        tt = 0
+        tf = 0 
+        ft = 0
+        ff = 0
+        # Testing against validation set
+        for insta_count in range(len(np_vs)):
+            # Calculate Net Value between X instance and weights
+            net = net_calculate(weights=weights, x_instance=np_vs[insta_count])
+            # Calculate the out values from the net values calculated above 
+            out_value = sigmoid(net=net)
+            predict = 1 if out_value > 0.5 else 0
+            # print(f"Predict Value:{predict}")
+            if predict == 1  and np_vs[insta_count][0] == 1:
+                tt += 1 
+            elif predict == 1  and np_vs[insta_count][0] == 0:
+                tf += 1 
+            elif predict == 0  and np_vs[insta_count][0] == 1:
+                ft += 1 
+            else: 
+                ff += 1
+        accuracy = (tt + ff) / (tt + tf+ ft+ ff)
+        print(f"Completed Epoch:{epochs}\nAccuracy: {accuracy}\nWeights: {weights}\n")
+    return weights
 
 # Beginning of code
 try:
@@ -168,7 +198,7 @@ try:
     testing_set = data_preprocessing(testing_set)
 
     # Train the model
-    stochastic_gradient_descent(training_set, validation_set)
+    weights = stochastic_gradient_descent(training_set, validation_set, learning_rate)
     print(training_set)
     
 except IndexError as e:
