@@ -11,12 +11,13 @@ The assignment works on the following main goals:
 """
 
 # Import libraries
+import os
 import sys
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_string_dtype
 from pandas.api.types import is_numeric_dtype
-
+from scipy.special import expit
 """
 Takes the following parameters:
 
@@ -47,7 +48,7 @@ def data_preprocessing(dataset):
             # If the max and min aren't 0 to ensure that we don't do zero division
             if max_value != 0 and min_value != 0:
                 # Apply net value formula to every value in pandas dataframe
-                dataset[x] = dataset[x].apply(lambda x: (x - min_value)/(max_value - min_value))
+                dataset[x] = dataset[x].apply(lambda y: (y - min_value)/(max_value - min_value))
             # Combine New column to our new_dataframe
             new_dataframe = pd.concat([new_dataframe, dataset[x]],axis=1)
     return new_dataframe
@@ -56,9 +57,8 @@ def data_preprocessing(dataset):
 Creation of a Sigmoid Function that handles overflow cases as well
 """
 def sigmoid(net):
-    z = np.exp(-net)
-    return 1 / (1 + z)
-    # If x is a very large positive number, the sigmoid function will be close to 1
+    return expit(net)
+    # #If x is a very large positive number, the sigmoid function will be close to 1
     # if net >= 0:
     #     z = np.exp(-net)
     #     return 1 / (1 + z)
@@ -91,18 +91,21 @@ def stochastic_gradient_descent(np_ts, np_vs, learning_rate):
             break
         # A. For each instance x in the training set
         for insta_count in range(len(np_ts)):
+            instance_label = np_ts[insta_count][0]
             # Calculate Net Value between X instance and weights
             net = net_calculate(weights=weights, x_instance=np_ts[insta_count])
             # Calculate the out values from the net values calculated above 
             out_value = sigmoid(net=net)
             # I. Calculate gradient of w0
-            grad_w0 = -1 * out_value * (1 - out_value) * (np_ts[insta_count][0] - out_value)
+            grad_w0=0
+            grad_w0 = -1 * out_value * (1 - out_value) * (instance_label - out_value)
             # Update first weight in weights
-            weights[0] -= learning_rate * grad_w0
+            weights[0] -= (learning_rate * grad_w0)
             # II. Calculate gradient of wi
             for attr_count in range(1, len(np_ts[0])):
-                grad_wi = -1 * np_ts[insta_count][attr_count] * out_value * (1 - out_value) * (np_ts[insta_count][0] - out_value)
-                weights[attr_count] -= learning_rate * grad_wi
+                grad_wi=0
+                grad_wi = -1 * np_ts[insta_count][attr_count] * out_value * (1 - out_value) * (instance_label - out_value)
+                weights[attr_count] -= (learning_rate * grad_wi)
             # print(f"Updated weights list: {weights}\n")
         epochs += 1
         tt = 0
@@ -111,22 +114,33 @@ def stochastic_gradient_descent(np_ts, np_vs, learning_rate):
         ff = 0
         # Testing against validation set
         for insta_count in range(len(np_vs)):
+            instance_label = np_vs[insta_count][0]
             # Calculate Net Value between X instance and weights
             net = net_calculate(weights=weights, x_instance=np_vs[insta_count])
             # Calculate the out values from the net values calculated above 
             out_value = sigmoid(net=net)
             predict = 1 if out_value > 0.5 else 0
             # print(f"Predict Value:{predict}")
-            if predict == 1  and np_vs[insta_count][0] == 1:
+            if predict == 1  and instance_label == 1:
                 tt += 1 
-            elif predict == 1  and np_vs[insta_count][0] == 0:
-                tf += 1 
-            elif predict == 0  and np_vs[insta_count][0] == 1:
+            elif predict == 1  and instance_label == 0:
                 ft += 1 
+            elif predict == 0  and instance_label == 1:
+                tf += 1 
             else: 
                 ff += 1
-        accuracy = (tt + ff) / (tt + tf+ ft+ ff)
-        print(f"Completed Epoch:{epochs}\nAccuracy: {accuracy}\nWeights: {weights}\n")
+        accuracy = (tt + ff) / (tt + tf + ft + ff)
+    print(f"Completed Epoch:{epochs}\nAccuracy: {accuracy}\nWeights: {weights}\n")
+
+    # outFileName = f"results-{os.path.basename(file_path)}-{learning_rate}-{randomSeed}.csv"
+    # # Writing Seciton
+    # data_input = {"0": [ft, tf], "1"}
+    # confusion_matrix
+    # outputFile = open("log-results/"+outFileName, 'w')
+
+    # writer = csv.writer(outputFile)
+    # # Write Labels Row
+    # writer.writerow(possible_labels)
     return weights
 
 def model(dataset, weight):
@@ -149,7 +163,7 @@ def model(dataset, weight):
         else:
             ff += 1
         accuracy = (tt + ff) / (tt + tf + ft + ff)
-        print(f"Accuracy: {accuracy}\nWeights: {weight}\n")
+    print(f"Accuracy: {accuracy}\nWeights: {weight}\n")
     return accuracy
 
 # Beginning of code
