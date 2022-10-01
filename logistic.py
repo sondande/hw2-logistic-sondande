@@ -1,7 +1,7 @@
 """
 Assignment #2: Logistic Regression
 
-By Sagana Ondande
+By Sagana Ondande & Ada Ates
 
 The assignment works on the following main goals:
 1. Implement logistic regression as a valuable method to supervised machine learning (and an eventual building block for neural networks),
@@ -57,15 +57,16 @@ def data_preprocessing(dataset):
 Creation of a Sigmoid Function that handles overflow cases as well
 """
 def sigmoid(net):
-    return expit(net)
-    # #If x is a very large positive number, the sigmoid function will be close to 1
-    # if net >= 0:
-    #     z = np.exp(-net)
-    #     return 1 / (1 + z)
-    # # If x is a very large negative number, the sigmoid function will be close to 0
-    # else:
-    #     z = np.exp(net)
-    #     return z / (1 + z)
+    # If x is a very large positive number, the sigmoid function will be close to 1
+    if net >= 0:
+        temp = np.exp(-net)
+        out = 1 / (1 + temp)
+    # If x is a very large negative number, the sigmoid function will be close to 0
+    else:
+        temp = np.exp(net)
+        out = temp / (1 + temp)
+    return out
+    #return expit(net)
 
 """
 Calculate Net Value for Stochastic Gradient Descent
@@ -82,7 +83,7 @@ def net_calculate(weights, x_instance):
 def stochastic_gradient_descent(np_ts, np_vs, learning_rate):
     # 1. Choose random values for all weights (often between -0.1 and 0.1)
     weights = np.random.uniform(-0.1, 0.1, training_set.shape[1])
-    # 2. Unitl either the accuracy on the validation set > A% or we run n epochs
+    # 2. Until either the accuracy on the validation set > A% or we run n epochs
     # Set accuracy variable 
     accuracy = 0
     epochs = 0
@@ -121,11 +122,11 @@ def stochastic_gradient_descent(np_ts, np_vs, learning_rate):
             out_value = sigmoid(net=net)
             predict = 1 if out_value > 0.5 else 0
             # print(f"Predict Value:{predict}")
-            if predict == 1  and instance_label == 1:
+            if predict == 1 and instance_label == 1:
                 tt += 1 
-            elif predict == 1  and instance_label == 0:
+            elif predict == 1 and instance_label == 0:
                 ft += 1 
-            elif predict == 0  and instance_label == 1:
+            elif predict == 0 and instance_label == 1:
                 tf += 1 
             else: 
                 ff += 1
