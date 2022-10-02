@@ -38,7 +38,7 @@ def data_preprocessing(dataset):
         # Determine if the column 'x' in training set is a Nominial Data or Numerical 
         if is_string_dtype(dataset[x]) and not is_numeric_dtype(dataset[x]):
             # Apply One-Hot Encoding onto Pandas Series at column 'x' 
-            dummies = pd.get_dummies(dataset[x], prefix=x, prefix_sep='.')
+            dummies = pd.get_dummies(dataset[x], prefix=x, prefix_sep='.', drop_first=True)
             # Combine the One-Hot Encoding Dataframe to our new dataframe to the new_dataframe 
             new_dataframe = pd.concat([new_dataframe, dummies],axis=1)
         else: 
@@ -67,7 +67,7 @@ def sigmoid(net):
         temp = np.exp(net)
         out = temp / (1 + temp)
     return out
-    #return expit(net)
+    # return expit(net)
 
 """
 Calculate Net Value for Stochastic Gradient Descent
@@ -76,7 +76,7 @@ def net_calculate(weights, x_instance):
     # take the first value from weights as it is part of the net without a corresponding value in the instance
     net = weights[0]
     # Instances and weights are the same length
-    for i in range(1, len(weights)):
+    for i in range(1, len(x_instance)):
         net += weights[i] * x_instance[i]
     return net
 
