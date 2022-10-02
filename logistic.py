@@ -18,6 +18,7 @@ import pandas as pd
 from pandas.api.types import is_string_dtype
 from pandas.api.types import is_numeric_dtype
 from scipy.special import expit
+from sklearn import metrics
 """
 Takes the following parameters:
 
@@ -98,13 +99,13 @@ def stochastic_gradient_descent(np_ts, np_vs, learning_rate):
             # Calculate the out values from the net values calculated above 
             out_value = sigmoid(net=net)
             # I. Calculate gradient of w0
-            grad_w0=0
+            grad_w0 = 0
             grad_w0 = -1 * out_value * (1 - out_value) * (instance_label - out_value)
             # Update first weight in weights
             weights[0] -= (learning_rate * grad_w0)
             # II. Calculate gradient of wi
             for attr_count in range(1, len(np_ts[0])):
-                grad_wi=0
+                grad_wi = 0
                 grad_wi = -1 * np_ts[insta_count][attr_count] * out_value * (1 - out_value) * (instance_label - out_value)
                 weights[attr_count] -= (learning_rate * grad_wi)
             # print(f"Updated weights list: {weights}\n")
@@ -142,6 +143,7 @@ def stochastic_gradient_descent(np_ts, np_vs, learning_rate):
     # writer = csv.writer(outputFile)
     # # Write Labels Row
     # writer.writerow(possible_labels)
+
     return weights
 
 def model(dataset, weight):
@@ -149,12 +151,17 @@ def model(dataset, weight):
     tf = 0
     ft = 0
     ff = 0
+    actualLabel = []
+    predictLabels = []
+    filename = ("results-" + str(file_path) + "-" + str(learning_rate) + "r" + "-" + str(randomSeed) + ".csv")
     for insta_count in range(len(dataset)):
+        actualLabel.append(dataset[insta_count][0])
         # Calculate Net Value between X instance and weights
         net = net_calculate(weights=weight, x_instance=dataset[insta_count])
         # Calculate the out values from the net values calculated above
         out_value = sigmoid(net=net)
         predict = 1 if out_value > 0.5 else 0
+        predictLabels.append(predict)
         if predict == 1 and dataset[insta_count][0] == 1:
             tt += 1
         elif predict == 1 and dataset[insta_count][0] == 0:
@@ -165,6 +172,55 @@ def model(dataset, weight):
             ff += 1
         accuracy = (tt + ff) / (tt + tf + ft + ff)
     print(f"Accuracy: {accuracy}\nWeights: {weight}\n")
+
+    labels = np.unique(actualLabel)
+
+    #print("confusion matrix from metrics:")
+    #cm = metrics.confusion_matrix(actualLabel, predictLabels)
+    #print(cm)
+    #df = pd.DataFrame(cm, index=labels, columns=labels)
+    #for row in df.values:
+        #print(str(tuple(row))[1:-1])
+
+    size = len(actualLabel)
+    matrix = dict()
+
+    # create matrix initialised with 0 (nested dictionary)
+    for class_name in labels:
+        matrix[class_name] = {label: 0 for label in labels}
+
+    # form the confusion matrix by incrementing proper places
+    for i in range(size):
+        actual_class = actualLabel[i]
+        # print("actual_class: ", actual_class)
+        pred_class = predictLabels[i]
+        # print("pred_class:", pred_class)
+        matrix[actual_class][pred_class] += 1
+        #print("matrix: ", matrix[actual_class][pred_class])
+
+    matrix = dict(zip(labels, list(matrix.values())))
+
+    print("Confusion Matrix of given model is :")
+    print("Predicted Label")
+    keys = list(matrix.keys())
+    print(",".join(str(e) for e in keys))
+    for key, value in matrix.items():
+        for pred, count in value.items():
+            #print("key, value", key, value)
+            print(count, end=",")  # counts in predictLabel & true matching or false counts
+        print("%s" % key)  # respective keys
+    # print("true, pred: ", true, predictLabel)      # test-related print statement
+
+    with open(filename, "w") as f:
+        f.write((",".join(str(e) for e in keys)))
+        f.write('\n')
+        for key, value in matrix.items():
+            for pred, count in value.items():
+                f.write(str(count))  # counts in predictLabel & true matching or false counts
+                f.write(",")
+            f.write("%s" % key)  # respective keys
+            f.write("\n")
+
     return accuracy
 
 # Beginning of code
@@ -212,6 +268,7 @@ try:
 
     # Read in dataset
     df = pd.read_csv(file_path)
+    #labels = df.iloc[:, 0]
 
     # shuffle the dataframe. Use random seed from input and fraction 1 as we want the whole dataframe
     shuffled_df = df.sample(frac=1,random_state=randomSeed)
