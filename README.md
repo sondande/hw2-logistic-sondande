@@ -18,14 +18,15 @@ This assignment contains four data sets that are based on four publicly availabl
     
     a. Record the accuracies of your program on the test set for each of the four data
 sets.
-    - **monks1.csv**
-      * **Accuracy:** 77% _(0.77)_ 
-    - **banknotes.csv**
-      * **Accuracy:** 77% _(0.77)_
-    - **occupancy.csv**_
-      * **Accuracy:** 91% _(0.91)_
-    - **seismic.csv**
-      * **Accuracy:** 95% _(0.95)_
+   - **Random Seed:** 12345
+     - **monks1.csv**
+       * **Accuracy:** 77% _(0.77)_ 
+     - **banknotes.csv**
+       * **Accuracy:** 95% _(0.95)_
+     - **occupancy.csv**_
+       * **Accuracy:** 98% _(0.98)_
+     - **seismic.csv**
+       * **Accuracy:** 92% _(0.92)_
     
     b. Create confidence intervals for each of your test set accuracies.
     - **monks1.csv**

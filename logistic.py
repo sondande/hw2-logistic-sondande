@@ -46,12 +46,16 @@ def data_preprocessing(dataset):
             max_value = max(dataset[x])
             # Find the minimum value in column 'x'
             min_value = min(dataset[x])
-            # If the max and min aren't 0 to ensure that we don't do zero division
-            if max_value != 0 and min_value != 0:
+            # Check if the column being evaluated is the label column. If so, just add it right into the dataframe
+            if x =='label':
+                new_dataframe = pd.concat([new_dataframe, dataset[x]], axis=1)
+                continue
+            # Ensure we don't run into a zero division error when normalizing all the values
+            elif (max_value - min_value) != 0:
                 # Apply net value formula to every value in pandas dataframe
                 dataset[x] = dataset[x].apply(lambda y: (y - min_value)/(max_value - min_value))
-            # Combine New column to our new_dataframe
-            new_dataframe = pd.concat([new_dataframe, dataset[x]],axis=1)
+                # Combine New column to our new_dataframe
+                new_dataframe = pd.concat([new_dataframe, dataset[x]],axis=1)
     return new_dataframe
 
 """
