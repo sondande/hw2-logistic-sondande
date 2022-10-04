@@ -189,15 +189,31 @@ In **seismic.csv:** 22 of the seeds fall inside of the confidence interval.
 
 2) Pick 10 different random seeds (document them in your README file). For the occupancy.csv data set using a learning rate of 0.01, track the accuracy of your model on the validation set after each epoch of stochastic gradient descent (i.e., after you feed the entire training set in).
    
-    a. Plot a line chart of the validation set accuracies for each epoch (the epochs go on the x-axis, and the accuracy goes on the y-axis). You can use any tool of your choice to create the line charts: Excel, R, matplotlib in Python, etc. Include your line chart as an image in your GitHub repository.
+a. Plot a line chart of the validation set accuracies for each epoch (the epochs go on the x-axis, and the accuracy goes on the y-axis). You can use any tool of your choice to create the line charts: Excel, R, matplotlib in Python, etc. Include your line chart as an image in your GitHub repository.
+   
+The random seeds we picked are as follows: 1, 5, 10, 25, 29, 30, 50, 250, 500, 1000. The respective graphs could be found under the file called "Graphs for Question 3." 
+ 
+b.   What trends do you see across the 10 random seeds? How does the accuracy of validation set change over time as the epoch increases? Were there differences between the 10 seeds, or did they all produce similar results?
 
-    b. What trends do you see across the 10 random seeds? How does the accuracy of validation set change over time as the epoch increases? Were there differences between the 10 seeds, or did they all produce similar results?
+Across the 10 random seeds it looks like the accuracy is getting more consistent with each increasing random seed. For example, in graph 1, we observe a sudden increase in accuracy around epoch 25, it reaches 0.965 (96.5%), but then we see a decrease and then leveling off at around 0.959 for the rest of the epochs, which is 500 and at times 400 (when accuracy is closer to 1). So there are differently differences between the 10 seeds, especially between lower and higher values of seeds. As the randomSeed increases, (50,250,500,1000), the results seem closer to each other with slight differences in accuracy and number of epochs.
 
-    c. What do these results imply? 
+c. What do these results imply? 
+
+When randomSeed is 1, the data is not shuffled much. Therefore, the reason behind this weird accuracy result could be due to this chosen value of randomSeed. However, with the increase of randomSeed to 5, then 10, the accuracy values increase and the number of epochs decrease. When we increase randomSeed even more, it seems that there are times where the accuracy is almost 1, which means it's nearly perfect. We also see a decrease in number of epochs as the accuracy is closer to 1. After randomSeed is at least 10, the accuracy is at least 0.96, most of the time even more and accuracy seems to level off at around epoch 50. Compared to lower number of randomSeeds, 50 epochs is a higher number of epochs but the model reaches better accuracy levels. It seems that the larger the randomSeed is, the more shuffled the dataset is, therefore it takes longer for the model to learn, yet it learns better!
 
 ### 2) A short paragraph describing your experience during the assignment (what did you enjoy, what was difficult, etc.)
 
+Ada~
+
+Personally, I enjoyed working on this lab because as we learn about neural networks in class, it makes more sense, I can visualize what happens in behind the scenes. I also really enjoyed the analysis part of this lab, seeing the model compare itself to the validation set of the dataset and to see this get plotted was very helpful for my understanding of the topic. I was unclear about a few things on the details of logistic regression but implementing them cleared those up! I think it was difficult to understand what was happening when we kept getting a value error specifically for seismic.csv with randomSeed 18, but the model worked fine with seeds 17 or 19 of the same data set. We realized there was a problem with our normalization, and not only it fixed the error but also our accuracies went up. What debugging can do is amazing.
+
+Sagana~
+
+
+
 ### 3) An estimation of how much time you spent on the assignment
+
+We estimate it was around 15 hours, including the research questions and their write-ups. But maybe more? Keeping track of time is hard.
 
 ### 4) An affirmation that you adhered to the honor code
    We have adhered to the honor code on this assignment. 
