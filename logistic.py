@@ -17,8 +17,8 @@ import numpy as np
 import pandas as pd
 from pandas.api.types import is_string_dtype
 from pandas.api.types import is_numeric_dtype
-from scipy.special import expit
-from sklearn import metrics
+# from scipy.special import expit
+# from sklearn import metrics
 """
 Takes the following parameters:
 
@@ -93,6 +93,7 @@ def stochastic_gradient_descent(np_ts, np_vs, learning_rate):
     accuracy = 0
     epochs = 0
     while accuracy <= 0.99:
+        # Ensure we are runnning 500 epochs
         if epochs > 500:
             break
         # A. For each instance x in the training set
@@ -137,20 +138,10 @@ def stochastic_gradient_descent(np_ts, np_vs, learning_rate):
                 ff += 1
         accuracy = (tt + ff) / (tt + tf + ft + ff)
     print(f"Completed Epoch:{epochs}\nAccuracy: {accuracy}\nWeights: {weights}\n")
-
-    # outFileName = f"results-{os.path.basename(file_path)}-{learning_rate}-{randomSeed}.csv"
-    # # Writing Seciton
-    # data_input = {"0": [ft, tf], "1"}
-    # confusion_matrix
-    # outputFile = open("log-results/"+outFileName, 'w')
-
-    # writer = csv.writer(outputFile)
-    # # Write Labels Row
-    # writer.writerow(possible_labels)
-
     return weights
 
 def model(dataset, weight):
+    # Initialize Variables
     tt = 0
     tf = 0
     ft = 0

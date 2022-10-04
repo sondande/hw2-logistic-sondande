@@ -32,14 +32,14 @@ sets.
     - **monks1.csv**
       * **Confidence Intervals:** [0.7303, 0.8097] 
     - **banknotes.csv**
-      * **Confidence Intervals:** [0.7758, 0.7643] 
+      * **Confidence Intervals:** [0.9385, 0.9615] 
     - **occupancy.csv**
-      * **Confidence Intervals:** [0.899, 0.9210] 
+      * **Confidence Intervals:** [0.9781, 0.9819] 
     - **seismic.csv**
-      * **Confidence Intervals:** [0.9385, 0.9615]
+      * **Confidence Intervals:** [0.9095, 0.9305]
 
 1) Pick 30 different random seeds (document them in your README file). Rerun your program on each data set using the same parameters as Question 1 (0.01 learning rate, 60% training percentage, 20% validation percentage).
-   
+
     a. What was the average accuracy you observed across all 30 seeds for each data set?
     - **monks1.csv**
        - **Random Seed**
@@ -142,6 +142,7 @@ sets.
          - **29:** 98.78% _(0.9878404669260701)_
          - **30:** 94.72% _(0.9472276264591439)_
        - **Average:** 97.99% _(0.9799935149)_
+
     - **seismic.csv**
        - **Random Seed**
          - **1:** 92.84% _(0.9284332688588007)_
@@ -178,7 +179,13 @@ sets.
       
     b. Did this average fall inside the confidence interval you calculated for Question 1?
 
-    c. How many of the 30 seeds produced a test set accuracy that fell within your confidence interval calculated in Question 1? Does this match your expectation, given that you calculated 95% confidence intervals in Question 1?
+All the value fall in the confidence intervals calculated in part 1 besides the average of seismic.csv. This one is above the confidence interval calculated slightly.
+
+c. How many of the 30 seeds produced a test set accuracy that fell within your confidence interval calculated in Question 1? Does this match your expectation, given that you calculated 95% confidence intervals in Question 1?
+In **monks1.csv:** 23 of the seeds fall inside of the confidence interval.
+In **banknotes.csv:** 11 of the seeds fall inside of the confidence interval.
+In **occupancy.csv:** 3 of the seeds fall inside of the confidence interval.
+In **seismic.csv:** 22 of the seeds fall inside of the confidence interval.
 
 2) Pick 10 different random seeds (document them in your README file). For the occupancy.csv data set using a learning rate of 0.01, track the accuracy of your model on the validation set after each epoch of stochastic gradient descent (i.e., after you feed the entire training set in).
    
