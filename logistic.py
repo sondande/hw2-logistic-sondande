@@ -84,6 +84,9 @@ def net_calculate(weights, x_instance):
         net += weights[i] * x_instance[i]
     return net
 
+"""
+This function trains the model using the training and validation sets. This calculates the stochastic gradient descent for our model to calculate the logistical regression for the dataset.
+"""
 
 def stochastic_gradient_descent(np_ts, np_vs, learning_rate):
     # 1. Choose random values for all weights (often between -0.1 and 0.1)
@@ -139,6 +142,12 @@ def stochastic_gradient_descent(np_ts, np_vs, learning_rate):
         accuracy = (tt + ff) / (tt + tf + ft + ff)
     print(f"Completed Epoch:{epochs}\nAccuracy: {accuracy}\nWeights: {weights}\n")
     return weights
+
+"""
+This section is using the trainged information aquired from the model to be used against a testing set. 
+In this funtion, we will also write the output of the testing set, procude the confusion matrix, and accuracy 
+rating of the model for the testing set based off the results from the confusion matrix
+"""
 
 def model(dataset, weight):
     # Initialize Variables
