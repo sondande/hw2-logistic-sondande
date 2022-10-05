@@ -209,6 +209,7 @@ Personally, I enjoyed working on this lab because as we learn about neural netwo
 
 Sagana~
 
+I enjoyed working on the lab. I thought it was interesting to learn about how stats played a role in machine learning, but also how it can be used in classification problems. I thought the process of learning how to do a ML pipeline through the data preprocessing, utilization of Pandas for the data preprocessing, and how to train a model through the use of a training set and a validation set. The overall process facinated me and I'm excited to learn more about how we can use the model for this lab in the next one with neural networks. Some of the difficulties was noticing some small mistakes that played a crucial role in the inaccuracies of the model. Example of this was not dropping one of the One-Hot Encoding columns as we found the accuracies were better when we dropped one of the columns verses having one for all them. We found once we dropped the column, the accuracies for datasets with nomial values grew. We also confirmed that normalization, we noticed it wasn't normalizing properly and saw how the accuracies were effected. Through this, I found it interesting to see how small mistakes played a huge factor in the accuracies of the model.
 
 
 ### 3) An estimation of how much time you spent on the assignment
